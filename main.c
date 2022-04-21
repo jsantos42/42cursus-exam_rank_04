@@ -31,8 +31,7 @@ char*	add_strings(char* first, char* second) {
 	for (int j = 0; second && second[j] != '\0'; j++)
 		sum[i++] = second[j];
 	sum[i] = '\0';
-	if (first != NULL)
-		free(first);
+	free(first);
 	return (sum);
 }
 
@@ -41,7 +40,7 @@ char*	get_full_input(int argc, char** argv) {
 
 	full_input = NULL;
 	for (int i = 1; i < argc; i++)
-		add_strings(full_input, argv[i]);
+		full_input = add_strings(full_input, argv[i]);
 	return (full_input);
 }
 
@@ -66,5 +65,7 @@ int main(int argc, char** argv, char** env) {
 //	terminate(EXIT_SUCCESS, cmds);
 	(void)env;
 	printf("%s\n", cmds->input);
+	free(cmds->input);
+	free(cmds);
 	return (0);
 }
