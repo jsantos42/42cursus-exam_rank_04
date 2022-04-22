@@ -17,7 +17,8 @@ void	terminate(int exit_code, t_cmds* cmds) {
 
 void	init_cmds(t_cmds* cmds) {
 	cmds = malloc(sizeof(t_cmds));
-
+	cmds->input = NULL;
+	cmds->list = NULL;
 }
 
 int main(int argc, char** argv, char** env) {
