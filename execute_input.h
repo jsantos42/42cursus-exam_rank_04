@@ -2,6 +2,6 @@
 #define EXAM04_EXECUTE_INPUT_H
 #include "main.h"
 
-void	execute_input(t_cmds* cmds);
+void	execute_input(t_list* cmds);
 
 #endif //EXAM04_EXECUTE_INPUT_H
