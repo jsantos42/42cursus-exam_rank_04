@@ -1,13 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "main.h"
-
-#include <stdio.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include "main.h"
 
+//==============================================================================
+//	UTILS
+//==============================================================================
 int	ft_strlen(char* str) {
 	int	i = 0;
 	while (str && str[i] != '\0')
@@ -25,13 +26,16 @@ void	list_rewind(t_list** list) {
 		*list = (*list)->previous;
 }
 
+/*
+ * Beware not to free the args[0-i], since they were not allocated in the heap,
+ * but passed on as arguments. Otherwise, we will have this error when freeing:
+ *		munmap_chunk(): invalid pointer
+ */
 void	terminate(int exit_code, t_list* list) {
 	t_list*	tmp;
 
 	list_rewind(&list);
 	while (list) {
-		for (int i = 0; i < list->nb_args; i++)
-			free(list->args[i]);
 		free(list->args);
 		tmp = list->next;
 		free(list);
@@ -132,10 +136,9 @@ int	exec_cd(t_list* list) {
  *
  * 2) If the previous command was of type PIPE, then this child process's
  * STD_IN fd should be replaced with the read_end of the pipe set
- * between the previous command and this one. Note that here there's no
- * need to save a copy of the original STD_IN, because this replacement
- * is done inside the child process, where we won't be needing it
- * (remember file descriptors are unique to each process). */
+ * between the previous command and this one (hence, the read end of the pipe of
+ * the PREVIOUS command). Note that here the PREVIOUS is paramount!
+ * */
 
 int	exec_cmd(t_list* list, char** env) {
 	bool	pipe_open = false;
@@ -156,7 +159,7 @@ int	exec_cmd(t_list* list, char** env) {
 			if (dup2(list->pipe_ends[1], STDOUT_FILENO) < 0)
 				return (-1);
 		if (list->previous && list->previous->flag == PIPE)	// 2
-			if (dup2(list->pipe_ends[0], STDIN_FILENO) < 0)
+			if (dup2(list->previous->pipe_ends[0], STDIN_FILENO) < 0)
 				return (-1);
 		if (execve(list->args[0], list->args, env))
 			print_error("error: cannot execute that command\n");
@@ -191,6 +194,8 @@ int	execute_input(t_list* list, char** env) {
 			ret = exec_cd(list);
 		else
 			ret = exec_cmd(list, env);
+		if (!list->next)
+			break ;
 		list = list->next;
 	}
 	return (ret);
@@ -213,11 +218,6 @@ int main(int argc, char** argv, char** env) {
 	list_rewind(&list);
 	if (list)
 		ret = execute_input(list, env);
-//	while (list) {
-//		for (int i = 0; i < list->nb_args; i++)
-//			printf("%s\n", list->args[i]);
-//		list = list->next;
-//	}
 	terminate(ret, list);
 	return (ret);
 }
