@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
-#include "main.h"
+#include "microshell.h"
 
 //==============================================================================
 //	UTILS
@@ -96,9 +96,11 @@ void	add_arg(t_list** list, char* arg) {
 }
 
 void	parse_arg(t_list** list, char* arg) {
-	if (is_break(arg) && !list)
+	if (!*list && is_break(arg))
 		return ;
-	else if (is_break(arg))
+	if (!*list && !is_break(arg))
+		*list = create_new_node(NULL);
+	if (is_break(arg))
 		(*list)->flag = BREAK;
 	else if (is_pipe(arg))
 		(*list)->flag = PIPE;
@@ -211,7 +213,7 @@ int main(int argc, char** argv, char** env) {
 
 	if (argc == 1)
 		return (EXIT_SUCCESS);
-	list = create_new_node(NULL);
+	list = NULL;
 	ret = 0;
 	for (int i = 1; i < argc; i++)
 		parse_arg(&list, argv[i]);

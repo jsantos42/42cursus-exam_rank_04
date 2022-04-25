@@ -1,5 +1,5 @@
-#ifndef EXAM04_MAIN_H
-#define EXAM04_MAIN_H
+#ifndef EXAM04_MICROSHELL_H
+#define EXAM04_MICROSHELL_H
 
 #define NULL_CHAR 1
 
