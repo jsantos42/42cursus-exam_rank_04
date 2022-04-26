@@ -1,4 +1,3 @@
-#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
@@ -62,7 +61,7 @@ t_list*	create_new_node(t_list* previous) {
 	new_node = NULL;
 	new_node = malloc(sizeof(t_list));
 	if (!new_node)
-		terminate(MALLOC, previous);
+		terminate(-1, previous);
 	new_node->args = NULL;
 	new_node->nb_args = 0;
 	new_node->flag = PARSING;
@@ -84,7 +83,7 @@ void	add_arg(t_list** list, char* arg) {
 	new_matrix = NULL;
 	new_matrix = malloc(new_size * sizeof(char*));
 	if (!new_matrix)
-		terminate(MALLOC, *list);
+		terminate(-1, *list);
 	i = -1;
 	while (++i < (*list)->nb_args)
 		new_matrix[i] = (*list)->args[i];

@@ -3,13 +3,6 @@
 
 #define NULL_CHAR 1
 
-typedef enum e_errors {
-	MALLOC = 			-1,
-	BAD_ARGUMENTS = 	-2,
-	WRONG_DIRECTORY = 	-3,
-	EXECUTION = 		-4
-}	t_errors;
-
 typedef enum e_flags {
 	PARSING,
 	PIPE,
